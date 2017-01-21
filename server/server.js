@@ -38,6 +38,11 @@ io.on('connection', (socket) => {
     //   createAt : new Date().getTime()
     // })
   })
+
+  socket.on('createLocationMessage', (position, callback) => {
+    console.log('createLocationMessage', position);
+    io.emit('newMessage', generateMessage('Admin', `${position.coords.lat}, ${position.coords.lng}`))
+  });
   // Listen for createEmail event
   socket.on('createEmail',  (newEmail) => {
     console.log('createEmail', newEmail)

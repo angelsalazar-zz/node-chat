@@ -20,6 +20,28 @@ app.use(express.static(path.join(__dirname,'../public')));
 // listen for new connection
 io.on('connection', (socket) => {
   console.log('new User connected');
+  // allows emit custom event "newMessage"
+  // socket.emit to single connection
+  // socket.emit('newMessage', {
+  //   from : 'angel@angel.com',
+  //   text : 'Hello world',
+  //   createAt : 123456
+  // });
+
+  // Listen for createMessage event
+  socket.on('createMessage', (message) => {
+    console.log('createMessage', message);
+    // io.emit send broadcast
+    io.emit('newMessage', {
+      from : message.from,
+      text : message.text,
+      createAt : new Date().getTime()
+    })
+  })
+  // Listen for createEmail event
+  socket.on('createEmail',  (newEmail) => {
+    console.log('createEmail', newEmail)
+  });
   // listen for drop connection
   socket.on('disconnect', () => {
     console.log('disconnectde from server');

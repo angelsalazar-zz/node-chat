@@ -20,14 +20,18 @@ app.use(express.static(path.join(__dirname,'../public')));
 // listen for new connection
 io.on('connection', (socket) => {
   console.log('new User connected');
-  // allows emit custom event "newMessage"
-  // socket.emit to single connection
-  // socket.emit('newMessage', {
-  //   from : 'angel@angel.com',
-  //   text : 'Hello world',
-  //   createAt : 123456
-  // });
 
+  socket.emit('newMessage', {
+    from : 'Admin',
+    text : 'Welcome to the chat app',
+    createAt : new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage', {
+    from : 'Admin',
+    text : 'New user joind',
+    createAt : new Date().getTime()
+  })
   // Listen for createMessage event
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
@@ -37,6 +41,12 @@ io.on('connection', (socket) => {
       text : message.text,
       createAt : new Date().getTime()
     })
+    // send the broadcast message, but not the creator
+    // socket.broadcast.emit('newMessage', {
+    //   from : message.from,
+    //   text : message.text,
+    //   createAt : new Date().getTime()
+    // })
   })
   // Listen for createEmail event
   socket.on('createEmail',  (newEmail) => {

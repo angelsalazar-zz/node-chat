@@ -6,7 +6,8 @@ const socketIO = require('socket.io');
 const path = require('path');
 
 const port = process.env.PORT;
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
+
 var app = express();
 
 var server = http.createServer(app);
@@ -39,9 +40,10 @@ io.on('connection', (socket) => {
     // })
   })
 
-  socket.on('createLocationMessage', (position, callback) => {
-    console.log('createLocationMessage', position);
-    io.emit('newMessage', generateMessage('Admin', `${position.coords.lat}, ${position.coords.lng}`))
+  socket.on('createLocationMessage', (coords, callback) => {
+    console.log('createLocationMessage', coords);
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lng));
+
   });
   // Listen for createEmail event
   socket.on('createEmail',  (newEmail) => {

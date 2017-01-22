@@ -17,6 +17,8 @@ var io = socketIO(server);
 
 // serve static files
 app.use(express.static(path.join(__dirname,'../public')));
+app.use('/libs',express.static(path.join(__dirname,'../node_modules')));
+
 
 // listen for new connection
 io.on('connection', (socket) => {

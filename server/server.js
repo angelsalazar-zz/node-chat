@@ -7,7 +7,7 @@ const path = require('path');
 
 const port = process.env.PORT;
 const {generateMessage, generateLocationMessage} = require('./utils/message');
-
+const {isRealString} = require('./utils/validation');
 var app = express();
 
 var server = http.createServer(app);
@@ -24,10 +24,21 @@ app.use('/libs',express.static(path.join(__dirname,'../node_modules')));
 io.on('connection', (socket) => {
   console.log('new User connected');
 
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to node chat app'));
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      callback('Name and room name are required');
+    }
 
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+    socket.join(params.room);
+    //socket.leave(str)
 
+    // target specific user
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to node chat app'));
+    // notify other users
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
+
+    callback();
+  })
   // Listen for createMessage event
   socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);

@@ -48,9 +48,12 @@ io.on('connection', (socket) => {
   })
   // Listen for createMessage event
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
-    // io.emit send broadcast
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    var user = users.getUser(socket.id);
+    if (user && isRealString(message.text)) {
+      // io.emit send broadcast
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+
+    }
     callback('this is from the server');
     // send the broadcast message, but not the creator
     // socket.broadcast.emit('newMessage', {
@@ -61,8 +64,11 @@ io.on('connection', (socket) => {
   })
 
   socket.on('createLocationMessage', (coords, callback) => {
-    console.log('createLocationMessage', coords);
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lng));
+    var user = users.getUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.lat, coords.lng));
+    }
 
   });
   // Listen for createEmail event

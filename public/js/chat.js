@@ -32,7 +32,17 @@ socket.on('connect', function () {
 });
 // listen for disconnect event
 socket.on('disconnect', function () {
-  console.log('disconnectde from server');
+  console.log('disconnected from server');
+});
+
+socket.on('updateUserList', function (users) {
+  console.log('user lists', users);
+  var ol = $('<ol></ol>');
+  users.forEach(function (user) {
+    ol.append($('<li></li>').text(user));
+  })
+
+  $('#users').html(ol);
 });
 
 // listen for newMessage event

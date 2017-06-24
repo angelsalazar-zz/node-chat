@@ -21,12 +21,12 @@ class Users {
   }
 
   removeUser (id) {
-    var index = this.users.findIndex((user) => {
-      return (user.id === id)
-    });
-    if (index === -1) return null;
+    var user = this.getUser(id);
+    if (user) {
+      this.users = this.users.filter((u) => u.id !== id)
+    }
 
-    return this.users.slice(index, 1)[0];
+    return user;
   }
 
   getUser (id) {
